@@ -1,0 +1,49 @@
+{
+  "name": "tst",
+  "version": "0.1.0",
+  "description": "LLM-powered unit test generator CLI by TST-Studio",
+  "type": "module",
+  "bin": {
+    "tst": "bin/run"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "oclif.manifest.json",
+    "README.md",
+    "LICENSE*"
+  ],
+  "oclif": {
+    "commands": "./dist/commands",
+    "bin": "tst"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "start": "node ./bin/run",
+    "prepack": "npm run build && oclif manifest",
+    "postpack": "true"
+  },
+  "dependencies": {
+    "@oclif/core": "^4.0.0",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
+    "fs-extra": "^11.2.0",
+    "globby": "^14.0.2",
+    "ts-morph": "^21.0.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@oclif/plugin-legacy": "^2.0.24",
+    "@types/node": "^20.14.9",
+    "eslint": "^8.57.0",
+    "husky": "^9.1.6",
+    "oclif": "^4.6.3",
+    "prettier": "^3.6.2",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  }
+}

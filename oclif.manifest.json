@@ -1,0 +1,289 @@
+{
+  "commands": {
+    "configure": {
+      "aliases": [],
+      "args": {},
+      "description": "Create or update tst.config.json",
+      "flags": {
+        "provider": {
+          "name": "provider",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "openai",
+            "anthropic",
+            "vertex",
+            "azure-openai",
+            "bedrock"
+          ],
+          "type": "option"
+        },
+        "model": {
+          "name": "model",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "outFormat": {
+          "name": "outFormat",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "sameLocation",
+            "testDir"
+          ],
+          "type": "option"
+        },
+        "outBaseSrc": {
+          "name": "outBaseSrc",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "outBaseTest": {
+          "name": "outBaseTest",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "astLibrary": {
+          "name": "astLibrary",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "ts-morph",
+            "babel"
+          ],
+          "type": "option"
+        },
+        "testingFramework": {
+          "name": "testingFramework",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "vitest",
+            "jest"
+          ],
+          "type": "option"
+        },
+        "moduleType": {
+          "name": "moduleType",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "module",
+            "commonjs"
+          ],
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "configure",
+      "pluginAlias": "tst",
+      "pluginName": "tst",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "configure.js"
+      ]
+    },
+    "generate": {
+      "aliases": [],
+      "args": {
+        "file": {
+          "description": "Path to source file (js/ts)",
+          "name": "file",
+          "required": true
+        }
+      },
+      "description": "Generate Vitest tests from a source file",
+      "flags": {
+        "function": {
+          "description": "Specific function name to target",
+          "name": "function",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "outFormat": {
+          "name": "outFormat",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "sameLocation",
+            "testDir"
+          ],
+          "type": "option"
+        },
+        "outBaseSrc": {
+          "name": "outBaseSrc",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "outBaseTest": {
+          "name": "outBaseTest",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "provider": {
+          "name": "provider",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "openai",
+            "anthropic",
+            "vertex",
+            "azure-openai",
+            "bedrock"
+          ],
+          "type": "option"
+        },
+        "model": {
+          "name": "model",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "force": {
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "dry-run": {
+          "name": "dry-run",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "stdout": {
+          "name": "stdout",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "generate",
+      "pluginAlias": "tst",
+      "pluginName": "tst",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "generate.js"
+      ]
+    },
+    "auth:set": {
+      "aliases": [],
+      "args": {},
+      "description": "Write API key to local .env or create one",
+      "flags": {
+        "provider": {
+          "name": "provider",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "openai",
+            "anthropic",
+            "vertex",
+            "azure-openai",
+            "bedrock"
+          ],
+          "type": "option"
+        },
+        "api-key": {
+          "name": "api-key",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "env": {
+          "description": "Path to .env file (default: project root ./.env)",
+          "name": "env",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "generic": {
+          "description": "Write TST_API_KEY instead of provider-specific var",
+          "name": "generic",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:set",
+      "pluginAlias": "tst",
+      "pluginName": "tst",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "auth",
+        "set.js"
+      ]
+    },
+    "auth:status": {
+      "aliases": [],
+      "args": {},
+      "description": "Show whether an API key is available for the configured provider (via env vars).",
+      "flags": {
+        "provider": {
+          "name": "provider",
+          "default": "openai",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "openai",
+            "anthropic",
+            "vertex",
+            "azure-openai",
+            "bedrock"
+          ],
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:status",
+      "pluginAlias": "tst",
+      "pluginName": "tst",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "auth",
+        "status.js"
+      ]
+    }
+  },
+  "version": "0.1.0"
+}
