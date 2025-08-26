@@ -4,7 +4,6 @@ import { writeTestFile } from '../services/test-writer.js';
 import { computeOutPath } from '../utils/pathing.js';
 import { loadConfig, resolveApiKey } from '../utils/config.js';
 import { OpenAIClient } from '../providers/openai.js';
-import { StubLlmClient } from '../services/llm.js';
 
 export default class Generate extends Command {
   static description = 'Generate Vitest tests from a source file';
@@ -48,19 +47,23 @@ export default class Generate extends Command {
 
     const code = await extractFunctionCode(sourcePath, flags.function);
 
-    // Resolve LLM client
     let client;
     if (provider === 'openai') {
       const key = resolveApiKey('openai');
-      client = key ? new OpenAIClient(key) : new StubLlmClient();
-    } else {
-      client = new StubLlmClient();
+      if (key) {
+        client = new OpenAIClient(key);
+      } else {
+        throw Error('OpenAI Key is not defined');
+      }
     }
 
-    const testContent = await client.generateVitest({
-      sourceCode: code,
-      model,
-    });
+    let testContent = '';
+    if (client) {
+      testContent = await client.generateVitest({
+        sourceCode: code,
+        model,
+      });
+    }
 
     const outPath = computeOutPath(
       sourcePath,
