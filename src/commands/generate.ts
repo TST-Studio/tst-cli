@@ -53,7 +53,9 @@ export default class Generate extends Command {
       if (key) {
         client = new OpenAIClient(key);
       } else {
-        throw Error('OpenAI Key is not defined');
+        throw Error(
+          'OpenAI API key is required but not configured. Please set your API key in the configuration.'
+        );
       }
     }
 
