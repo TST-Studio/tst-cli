@@ -1,11 +1,26 @@
 {
-  "name": "tst",
+  "name": "@tst-studio/tst",
   "version": "0.1.0",
   "description": "LLM-powered unit test generator CLI by TST-Studio",
   "type": "module",
-  "bin": {
-    "tst": "bin/run"
+  "author": "TST-Studio",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TST-Studio/tst-cli.git"
   },
+  "bugs": {
+    "url": "https://github.com/TST-Studio/tst-cli/issues"
+  },
+  "homepage": "https://github.com/TST-Studio/tst-cli#readme",
+  "license": "MIT",
+  "bin": {
+    "tst": "bin/run.js"
+  },
+  "keywords": [
+    "unit",
+    "test",
+    "ai"
+  ],
   "files": [
     "bin/",
     "dist/",
@@ -13,6 +28,9 @@
     "README.md",
     "LICENSE*"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "oclif": {
     "commands": "./dist/commands",
     "bin": "tst"
