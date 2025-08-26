@@ -3,6 +3,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
 import { type TstConfig } from '../types/index.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const schema = z.object({
   provider: z
@@ -41,13 +43,12 @@ export async function saveConfig(
 export function resolveApiKey(provider: string): string | undefined {
   const generic = process.env.TST_API_KEY;
   if (generic) return generic;
-
   const map: Record<string, string> = {
-    'openai': 'TST_OPENAI_API_KEY',
-    'anthropic': 'TST_ANTHROPIC_API_KEY',
-    'vertex': 'TST_VERTEX_API_KEY',
+    openai: 'TST_OPENAI_API_KEY',
+    anthropic: 'TST_ANTHROPIC_API_KEY',
+    vertex: 'TST_VERTEX_API_KEY',
     'azure-openai': 'TST_AZURE_OPENAI_API_KEY',
-    'bedrock': 'TST_BEDROCK_API_KEY',
+    bedrock: 'TST_BEDROCK_API_KEY',
   };
   const envName = map[provider];
   return envName ? process.env[envName] : undefined;
