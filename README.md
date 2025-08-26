@@ -9,26 +9,23 @@ The tool takes a JavaScript/TypeScript source file (and optionally a single func
 ## Installation
 
 ```bash
-npm install tst
+$ npm install -g @tst-studio/tst
+
+added 77 packages in 2s
+
+25 packages are looking for funding
+  run `npm fund` for details
 ```
 
 ---
 
-## Quick Start
+## Configuration
 
 Add `tst.config.json` configuration file:
 
 ```bash
-{
-  "provider": "openai",
-  "model": "gpt-4o-mini",
-  "outFormat": "testDir",
-  "outBaseSrc": "./src",
-  "outBaseTest": "./tests",
-  "astLibrary": "ts-morph",
-  "testingFramework": "vitest",
-  "moduleType": "module"
-}
+$ tst configure --outFormat=sameLocation
+Wrote tst.config.json
 ```
 
 ---
