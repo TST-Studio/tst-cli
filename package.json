@@ -41,6 +41,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "test": "vitest",
+    "run": "vitest run",
     "dev": "tsx src/index.ts",
     "start": "node ./bin/run",
     "prepack": "npm run build && oclif manifest",
@@ -52,6 +54,7 @@
     "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "globby": "^14.0.2",
+    "openai": "^5.16.0",
     "ts-morph": "^21.0.1",
     "zod": "^3.23.8"
   },
@@ -63,6 +66,7 @@
     "oclif": "^4.6.3",
     "prettier": "^3.6.2",
     "tsx": "^4.16.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "vitest": "^3.2.4"
   }
 }
