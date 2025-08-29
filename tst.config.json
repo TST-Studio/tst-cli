@@ -1,0 +1,8 @@
+{
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "outFormat": "sameLocation",
+  "astLibrary": "ts-morph",
+  "testingFramework": "vitest",
+  "moduleType": "module"
+}
