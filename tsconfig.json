@@ -4,11 +4,18 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["vitest/globals", "node"]
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    // "**/*.test.ts",
+    // "**/*.test.tsx",
+    // "**/*.spec.ts",
+    // "**/*.spec.tsx"
+  ]
 }
