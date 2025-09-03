@@ -1,0 +1,71 @@
+name: Notify Discord
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened, ready_for_review, closed, converted_to_draft, edited, synchronize]
+  release:
+    types: [published]
+  issues:
+    types: [opened, closed, reopened, edited]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord (pull_request)
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          script: |
+            const webhook = process.env.DISCORD_WEBHOOK;
+            if (!webhook) {
+              core.setFailed('DISCORD_WEBHOOK is not set. Cannot send notification to Discord.');
+              return;
+            }
+            const pr = context.payload.pull_request;
+            const action = context.payload.action;
+            const repo = context.payload.repository.full_name;
+            const title = pr.title;
+            const number = pr.number;
+            const url = pr.html_url;
+            const user = pr.user?.login;
+            const base = pr.base?.ref;
+            const head = pr.head?.ref;
+            const merged = pr.merged ? ' (merged)' : '';
+            const content = `**${repo}**\nPR #${number} ${merged} **${title}**\n${action} by **${user}** — \`${head}\` → \`${base}\`\n${url}`;
+
+            await fetch(webhook, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content })
+            });
+
+      - name: Post to Discord (issues)
+        if: ${{ github.event_name == 'issues' }}
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          script: |
+            const webhook = process.env.DISCORD_WEBHOOK;
+            if (!webhook) {
+              core.setFailed('DISCORD_WEBHOOK is not set. Cannot send notification to Discord.');
+              return;
+            }
+            const i = context.payload.issue;
+            const action = context.payload.action;
+            const repo = context.payload.repository.full_name;
+            const title = i.title;
+            const number = i.number;
+            const url = i.html_url;
+            const user = context.payload.sender?.login;
+            const content = `**${repo}**\nIssue #${number} **${title}**\n${action} by **${user}**\n${url}`;
+            await fetch(webhook, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content })
+            });
+
