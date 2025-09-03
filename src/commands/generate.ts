@@ -54,7 +54,12 @@ export default class Generate extends Command {
     const code = await extractFunctionCode(sourcePath, flags.function);
 
     // deciding where the test file will be written (uses repo conventions & flags)
-    const outPath = computeOutPath(sourcePath, outFormat, outBaseSrc, outBaseTest);
+    const outPath = computeOutPath(
+      sourcePath,
+      outFormat,
+      outBaseSrc,
+      outBaseTest
+    );
 
     // calculate the import path the test should use to import the SUT
     const fromDir = path.dirname(outPath);
@@ -65,12 +70,14 @@ export default class Generate extends Command {
     const importPath = `${noExt}.js`;
 
     // initialize the chosen LLM client (currently openai)
-      // validates API key & provides repo profile for model
+    // validates API key & provides repo profile for model
     let client;
     if (provider === 'openai') {
       const key = resolveApiKey('openai');
       if (!key) {
-        throw new Error('❌ OpenAI API key is require but not configured. Please include your API key in configuration.');
+        throw new Error(
+          '❌ OpenAI API key is require but not configured. Please include your API key in configuration.'
+        );
       }
       // this helps the model behave and infer testDir & suffix
       const isTsx = /\.tsx$/i.test(sourcePath);
@@ -104,7 +111,7 @@ export default class Generate extends Command {
     }
 
     // if user wants a dry run (print and exit)
-    if(flags['dry-run'] || flags.stdout) {
+    if (flags['dry-run'] || flags.stdout) {
       this.log(testContent);
       return;
     }

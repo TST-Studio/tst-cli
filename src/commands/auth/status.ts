@@ -15,8 +15,7 @@ export default class AuthStatus extends Command {
   async run(): Promise<void> {
     const { flags } = await this.parse(AuthStatus);
     const key = resolveApiKey(flags.provider);
-    if (key)
-      this.log(`Key for ${flags.provider}: set (length=${key.length})`);
+    if (key) this.log(`Key for ${flags.provider}: set (length=${key.length})`);
     else
       this.log(
         `No key found for ${flags.provider}. Use "tst auth set" or set env var.`

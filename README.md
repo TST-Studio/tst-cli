@@ -153,8 +153,7 @@ Help us build the most seamless automated test generation tool possible.
 ### Before opening a PR:
 
 - Write tests where appropriate (or use this tool! 😀 )
-- Run ```npm run format:check && npm test```.
-
+- Run `npm run format:check && npm test`.
 
 ### Prerequisites
 
@@ -190,7 +189,6 @@ Ensure you have the following installed:
   - [oclif](https://oclif.io/) – CLI scaffolding and packaging
   - [@oclif/plugin-legacy](https://github.com/oclif/plugin-legacy) – Legacy command support
   - `oclif.manifest.json` – Generated CLI manifest
-
 
 ### Developing
 
@@ -233,11 +231,13 @@ Use this checklist when cutting a new release to npm.
 ### 1) Branch is clean
 
 Ensure:
+
 - All code is formatted consistently: `npm run format`
 - `README.md` is up to date
 - All code is committed
 
 Ensure main is clean:
+
 ```
 $ git status
 On branch main
@@ -275,6 +275,7 @@ npm publish --dry-run
 This step updates `package.json`, creates a git tag (e.g., `v0.1.1`), and commits.
 
 Determine if this is:
+
 - A **patch** (bug fix. No functionality changed)
 - A **minor** release (functionality was added)
 - A **major** release (backwards incompatible changes added)
@@ -410,7 +411,6 @@ tst auth set --provider=openai --api-key=$TST_OPENAI_API_KEY
 tst auth status
   # Show current authentication status
 ```
-
 
 #### Other Commands
 

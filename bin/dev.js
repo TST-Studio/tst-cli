@@ -15,12 +15,14 @@ if (process.env.NODE_ENV != 'production') {
     .filter((p) => fs.existsSync(p));
 
   if (manifests.length) {
-    const manifestsList = manifests.map((p) => path.relative(projectRoot, p)).join(', ');
+    const manifestsList = manifests
+      .map((p) => path.relative(projectRoot, p))
+      .join(', ');
     console.warn(
       `\n⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ Detected oclif manifest(s) in dev mode: ${manifestsList}\n` +
-      `    These can force oclif to load from "dist" and break tsx dev runs.\n` +
-      `    Remove them to proceed:\n` +
-      `      rm ${manifests.map(p => JSON.stringify(path.relative(projectRoot, p))).join(' ')}\n`
+        `    These can force oclif to load from "dist" and break tsx dev runs.\n` +
+        `    Remove them to proceed:\n` +
+        `      rm ${manifests.map((p) => JSON.stringify(path.relative(projectRoot, p))).join(' ')}\n`
     );
   }
 }
