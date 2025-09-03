@@ -5,3 +5,4 @@ dist
 # Manifests are for NPM package. However, they should not be checked into repo
 oclif.manifest.json
 .oclif.manifest.json
+doit.sh
