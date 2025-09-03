@@ -194,7 +194,7 @@ Ensure you have the following installed:
 
 ### Developing
 
-The `dev.js` command is a development command that represents the `tst command but will continue to compile Typescript on the fly while developing.
+The `dev.js` command is a development command that represents the `tst` command but will continue to compile Typescript on the fly while developing.
 
 ```
 $ bin/dev.js
@@ -405,7 +405,7 @@ tst generate ./src/utils/math.js --function=add   # Generate unit tests for a sp
 #### Auth
 
 ```bash
-tst auth set --provider=openai --api-key=$OPENAI_API_KEY
+tst auth set --provider=openai --api-key=$TST_OPENAI_API_KEY
   # Store API key for a specific provider
 tst auth status
   # Show current authentication status
