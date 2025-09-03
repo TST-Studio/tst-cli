@@ -39,10 +39,10 @@
 
 ## About the Project
 
-`tst` is a tool from TST-Studio that **automatically generates unit tests for TypeScript code**, helping developers maintain flow, reduce boilerplate, and improve test coverage.  
+`tst` is a tool from TST-Studio that **automatically generates unit tests for JavaScript and TypeScript code**, helping developers maintain flow, reduce boilerplate, and improve test coverage.
 Built with **TypeScript, Vitest, OCLIF, ts-morph, and LLMs (like OpenAI, Claude, etc)**.
 
-<div align="center"> 
+<div align="center">
   <img src="images/Screenshot.png" alt="screenshot" />
 </div>
 
@@ -104,13 +104,57 @@ describe('add', () => {
 
 - Generate unit tests automatically from source files
 - Output structured, runnable Vitest test files
-- Update existing test cases as code evolves
-- AI-assisted edge case suggestions
 - CLI interface for smooth developer workflow
 
 ---
 
 ## Getting Started
+
+You can use this tool in your own repositories.
+
+### Installation
+
+```bash
+$ npm install @tst-studio/tst
+```
+
+---
+
+### Configuration
+
+Automatically add `tst.config.json` configuration file:
+
+```bash
+$ tst configure --outFormat=sameLocation
+Wrote tst.config.json
+```
+
+---
+
+### Usage
+
+#### Generate tests for a file
+
+```bash
+tst generate ./src/queue.js
+```
+
+This will submit the whole file to the LLM and create a test file in the appropriate location.
+
+## How to Contribute
+
+Help us build the most seamless automated test generation tool possible.
+
+### Issues & PRs welcome!
+
+- Repo: https://github.com/TST-Studio/tst-cli
+- Issues: https://github.com/TST-Studio/tst-cli/issues
+
+### Before opening a PR:
+
+- Write tests where appropriate (or use this tool! 😀 )
+- Run ```npm run format:check && npm test```.
+
 
 ### Prerequisites
 
@@ -147,46 +191,142 @@ Ensure you have the following installed:
   - [@oclif/plugin-legacy](https://github.com/oclif/plugin-legacy) – Legacy command support
   - `oclif.manifest.json` – Generated CLI manifest
 
-### Installation
 
-```bash
-$ npm install -g @tst-studio/tst
+### Developing
+
+The `dev.js` command is a development command that represents the `tst command but will continue to compile Typescript on the fly while developing.
+
 ```
+$ bin/dev.js
+LLM-powered unit test generator CLI by TST-Studio
+
+VERSION
+  @tst-studio/tst/0.1.0 darwin-arm64 node-v22.17.1
+
+USAGE
+  $ tst [COMMAND]
+
+TOPICS
+  auth  Write API key to local .env or create one
+
+COMMANDS
+  configure  Create or update tst.config.json
+  generate   Generate Vitest tests from a source file
+```
+
+To test outside of the `tst-cli` repo (e.g., to test against a different `tsconfig.json` file without breaking the tst command), use another repository like this sandbox repository:
+
+https://github.com/TST-Studio/demo-test-script
 
 ---
 
-### Configuration
+## Publish (maintainers only)
 
-Add `tst.config.json` configuration file:
+Use this checklist when cutting a new release to npm.
 
-```bash
-$ tst configure --outFormat=sameLocation
-Wrote tst.config.json
+### 0) Prerequisites
+
+- [x] You are a maintainer for the @tst-studio org/package.
+- [x] Your npm account has 2FA enabled.
+- [x] You’re logged in: `npm whoami` (login with `npm login` if needed)
+
+### 1) Branch is clean
+
+Ensure:
+- All code is formatted consistently: `npm run format`
+- `README.md` is up to date
+- All code is committed
+
+Ensure main is clean:
 ```
+$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+```
+
+Next steps may fail if `main` is not clean.
+
+### 2) Prep the release
+
+Verify the package contents
+
+1. Build the `tst` command:
+
+```
+npm run build
+```
+
+2. Pack the `tst` command and inspect the tarball
+
+```
+npm pack
+```
+
+3. View a publish dry run. Sanity check what is included:
+
+```
+npm publish --dry-run
+```
+
+### 3) Bump the version (SemVer)
+
+This step updates `package.json`, creates a git tag (e.g., `v0.1.1`), and commits.
+
+Determine if this is:
+- A **patch** (bug fix. No functionality changed)
+- A **minor** release (functionality was added)
+- A **major** release (backwards incompatible changes added)
+
+- Ensure main is clean (see step 1).
+
+#### If Patch
+
+```
+npm version patch -m "chore(release): %s"
+```
+
+#### If Minor
+
+```
+npm version minor -m "feat!: %s"
+```
+
+#### If Major
+
+```
+npm version major -m "feat!: %s"
+```
+
+### 4) Publish to NPM
+
+```
+npm publish
+```
+
+### 5) Push tag and verify
+
+```
+git push --follow-tags
+npm view @tst-studio/tst version
+```
+
+### Common Pitfalls
+
+- **EPUBLISHCONFLICT**: That version already exists
+
+- **E403 / not authorized to publish**: You’re not a maintainer for @tst-studio/tst under the org; ask an admin to add you or your team.
+
+- **2FA errors**: Provide --otp=(Your code) or re-enable 2FA on your account.
+
+- **Wrong files in the tarball**: Use `.npmignore` or files in `package.json`; re-run npm pack to confirm.
 
 ---
 
-### Usage
+### Documentation
 
-#### Generate tests for a file
-
-```bash
-tst generate ./src/queue.js
-```
-
-This will submit the whole file to the LLM and create a test file in the appropriate location.
-
-#### Generate tests for a specific function
-
-```bash
-tst generate ./src/queue.js --function=enqueue
-```
-
-Only the `enqueue` function is sent to the LLM for test generation.
-
----
-
-## Output Location
+#### Output Location
 
 You can control where test files are generated using the `outFormat` option in `tst.config.json`.
 
@@ -206,7 +346,7 @@ You can control where test files are generated using the `outFormat` option in `
 
 ---
 
-## Configuration
+#### Configuration
 
 `tst` expects a configuration file in your project root:
 
@@ -227,7 +367,7 @@ Example:
 }
 ```
 
-### Fields
+##### Fields
 
 - **provider**: `"openai"` (future: `"anthropic"`, `"vertex"`, `"azure-openai"`, `"bedrock"`, etc.)
 - **model**: `"gpt-4o-mini"` (future: `"gpt-4o"`, `"gpt-4.1"`, `"gpt-4.1-mini"`)
@@ -240,9 +380,9 @@ Example:
 
 ---
 
-## Commands
+### Commands
 
-### Configure
+#### Configure
 
 ```bash
 tst configure
@@ -254,7 +394,7 @@ Generates `tst.config.json`. You can also specify fields via flags:
 tst configure --provider=openai --model=gpt-4o-mini --outFormat=testDir --outBaseSrc=./src --outBaseTest=./tests --astLibrary=ts-morph --testingFramework=vitest --moduleType=module
 ```
 
-## Generate
+#### Generate
 
 ```bash
 tst generate ./src/utils/math.js                  # Generate unit tests for an entire file
@@ -262,7 +402,7 @@ tst generate ./src/utils/math.js --function=add   # Generate unit tests for a sp
 
 ```
 
-## Auth
+#### Auth
 
 ```bash
 tst auth set --provider=openai --api-key=$OPENAI_API_KEY
@@ -271,16 +411,8 @@ tst auth status
   # Show current authentication status
 ```
 
-### Discovery
 
-```bash
-tst providers list                 # List all available providers
-tst models list--provider=openai   # List models for a specific provider (e.g., OpenAI)
-tst config show                    # Display current configuration
-tst doctor                         # Run diagnostics to check environment and setup
-```
-
-### Other Commands
+#### Other Commands
 
 ```bash
 tst --help      # Display available commands and usage
@@ -289,23 +421,13 @@ tst --version   # Show the current CLI version
 
 ---
 
-## Environment Variables
+### Environment Variables
 
 ```bash
-export OPENAI_API_KEY=sk-...
+export TST_OPENAI_API_KEY=sk-...
 ```
 
 The API key is required to communicate with the LLM.
-
----
-
-## Roadmap
-
-- **Provider Support:** Add integration for `anthropic`, `vertex`, `azure-openai`, and `bedrock`
-- **Alternative AST parsers:** Explore alternative parsers such as `babel`
-- **Testing Frameworks:** Extend support beyond Vitest ( e.g. `jest`)
-- **Module type options:** Add configuration options for (`commonjs`)
-- **CI integration modes:** - Provide modes for seamless CI/CD workflows
 
 ---
 

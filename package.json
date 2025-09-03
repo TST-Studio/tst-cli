@@ -41,10 +41,10 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "vitest",
-    "run": "vitest run",
-    "dev": "tsx src/index.ts",
-    "start": "node ./bin/run",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "start": "node ./bin/dev",
     "prepack": "npm run build && oclif manifest",
     "postpack": "true"
   },
