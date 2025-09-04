@@ -167,7 +167,7 @@ This will submit the whole file to the LLM and create a test file in the appropr
 
 TST-Studio is passionate about making test creation as seamless as possible in any IDE. The `tst-cli` was created to ensure compatibility across many IDEs.
 
-For example, here is a fairly simple way to integrate the IDE command into **VSCODE**.
+For example, here is a fairly simple way to integrate the IDE command into **VSCode**.
 
 Assuming, the `package.json` commands have the following entry:
 
