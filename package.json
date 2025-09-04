@@ -1,6 +1,6 @@
 {
   "name": "@tst-studio/tst",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "LLM-powered unit test generator CLI by TST-Studio",
   "type": "module",
   "author": "TST-Studio",
