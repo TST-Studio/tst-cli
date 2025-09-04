@@ -124,7 +124,7 @@ $ npm install -D @tst-studio/tst
 
 1. Add an entry into `package.json` `scripts` to access the command from the repository
 
-```
+```json
 "scripts": {
   "tst": "tst generate"
 }
@@ -165,13 +165,13 @@ This will submit the whole file to the LLM and create a test file in the appropr
 
 #### IDE Integration
 
-TST-Studio is passionate about making test creation as seamless as possible in any IDE. The `tst-cli` was created to ensure compatibilty across many IDEs.
+TST-Studio is passionate about making test creation as seamless as possible in any IDE. The `tst-cli` was created to ensure compatibility across many IDEs.
 
 For example, here is a fairly simple way to integrate the IDE command into **VSCODE**.
 
 Assuming, the `package.json` commands have the following entry:
 
-```
+```json
 "scripts": {
   "tst": "tst generate"
 }
@@ -179,7 +179,7 @@ Assuming, the `package.json` commands have the following entry:
 
 One can create a `.vscode/tasks.json` configuration:
 
-```
+```json
 { 
   "version": "2.0.0",
   "tasks": [
@@ -199,10 +199,10 @@ Then, from the Command Pallet, the "Tasks: Run Task" will have a task named "Run
 
 If one runs tasks often, this will be the top task on the list.
 
-To make this a more streamlined process, one can configure Key Bindings that, when pressed, will run this task. **Ensure the task name matches the task above exactly**: `Run tst command on current file"`
+To make this a more streamlined process, one can configure Key Bindings that, when pressed, will run this task. **Ensure the task name matches the task above exactly**: `Run tst command on current file`.
 
-`.vscode/keybindings.json`
-```
+`.vscode/keybindings.json`:
+```json
 [
   {
     "key": "ctrl+alt+r",
