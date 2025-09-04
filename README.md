@@ -361,19 +361,19 @@ Determine if this is:
 #### If Patch
 
 ```
-npm version patch -m 'chore(release): %s'
+npm version patch -m 'chore(release): Bump version to %s'
 ```
 
 #### If Minor
 
 ```
-npm version minor -m 'feat!: %s'
+npm version minor -m 'feat!(release): Bump version to %s'
 ```
 
 #### If Major
 
 ```
-npm version major -m 'feat!: %s'
+npm version major -m 'feat!(release): Bump version to %s'
 ```
 
 ### 4) Publish to NPM
