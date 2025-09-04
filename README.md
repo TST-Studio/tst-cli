@@ -282,22 +282,24 @@ Determine if this is:
 
 - Ensure main is clean (see step 1).
 
+**NOTE**: The following instructions need to have single quotes (not double quotes) as they can include an exclamation mark (used by the "npm version" command). Without the single quotes, the exclamation mark can be interpreted as a history command by the shell.
+
 #### If Patch
 
 ```
-npm version patch -m "chore(release): %s"
+npm version patch -m 'chore(release): %s'
 ```
 
 #### If Minor
 
 ```
-npm version minor -m "feat!: %s"
+npm version minor -m 'feat!: %s'
 ```
 
 #### If Major
 
 ```
-npm version major -m "feat!: %s"
+npm version major -m 'feat!: %s'
 ```
 
 ### 4) Publish to NPM
