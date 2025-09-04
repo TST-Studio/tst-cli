@@ -3,7 +3,16 @@ name: Notify Discord
 on:
   push:
   pull_request:
-    types: [opened, reopened, ready_for_review, closed, converted_to_draft, edited, synchronize]
+    types:
+      [
+        opened,
+        reopened,
+        ready_for_review,
+        closed,
+        converted_to_draft,
+        edited,
+        synchronize,
+      ]
   release:
     types: [published]
   issues:
@@ -68,4 +77,3 @@ jobs:
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ content })
             });
-

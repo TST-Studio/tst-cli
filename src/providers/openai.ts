@@ -19,23 +19,26 @@ function suggestTestOutPath(sutFilePath: string, profile: RepoProfile): string {
 }
 
 /** calculate the import path that the test should use to import the current file/ function (SUT: Subject Under Test) */
-function calculateImportPath(sutFilePath: string, testOutPath: string, nodeNext = true): string {
+function calculateImportPath(
+  sutFilePath: string,
+  testOutPath: string,
+  nodeNext = true
+): string {
   const from = path.dirname(testOutPath);
   const rel = toPosix(path.relative(from, sutFilePath)); // connecting the test file and SUT paths
   const withDot = rel.startsWith('.') ? rel : `./${rel}`; // making sure the relative starts with a period
-  const noExt = withDot.replace(/\.(tsx?|jsx?|mjs|cjs)$/, ''); 
+  const noExt = withDot.replace(/\.(tsx?|jsx?|mjs|cjs)$/, '');
   return nodeNext ? `${noExt}.js` : noExt;
 }
 
-
 /*  Persona presets: helps guide generation style (express route test vs React test) */
-export type Persona = 
-'senior-test-engineer' |
-'react-specialist' |
-'express-verifier' |
-'type-edge-hunter' |
-'mocking-minimalist' |
-'coverage-coach';
+export type Persona =
+  | 'senior-test-engineer'
+  | 'react-specialist'
+  | 'express-verifier'
+  | 'type-edge-hunter'
+  | 'mocking-minimalist'
+  | 'coverage-coach';
 
 /* Repo profile for awareness: facts about repo layout to help model write test that run */
 export interface RepoProfile {
@@ -60,12 +63,18 @@ export interface OpenAIClientDefaults {
 
 /*  Persona add-on rules: for the base prompt, depending on persona  */
 const PERSONA_ADDONS: Record<Persona, string> = {
-  'senior-test-engineer': 'Prefer table-driven tests; avoid snapshots; minimal mocking.',
-  'react-specialist': 'Use @testing-library/react and @testing-library/user-event; assume jsdom; test roles/labels and critical user flows; avoid implementation details.',
-  'express-verifier': 'Use supertest where possible; cover success, validation error, and failure paths; assert status codes and JSON bodies; mock only external services.',
-  'type-edge-hunter': 'Exercise unions, optionals, defaults, and guards; assert thrown errors precisely (message & type) where meaningful.',
-  'mocking-minimalist': 'Favor real imports; mock only network/fs/process boundaries; never mock the system under test.',
-  'coverage-coach': 'Ensure each branch/conditional is touched; keep each test short and focused.',
+  'senior-test-engineer':
+    'Prefer table-driven tests; avoid snapshots; minimal mocking.',
+  'react-specialist':
+    'Use @testing-library/react and @testing-library/user-event; assume jsdom; test roles/labels and critical user flows; avoid implementation details.',
+  'express-verifier':
+    'Use supertest where possible; cover success, validation error, and failure paths; assert status codes and JSON bodies; mock only external services.',
+  'type-edge-hunter':
+    'Exercise unions, optionals, defaults, and guards; assert thrown errors precisely (message & type) where meaningful.',
+  'mocking-minimalist':
+    'Favor real imports; mock only network/fs/process boundaries; never mock the system under test.',
+  'coverage-coach':
+    'Ensure each branch/conditional is touched; keep each test short and focused.',
 };
 
 /** Base test-writer system prompt. Tokens get replaced before send */
@@ -120,17 +129,23 @@ function buildRepoFactSheet(p: RepoProfile): string {
     `- testEnv: ${p.testEnv}`,
     `- testDir: ${p.testDir}, suffix: ${p.suffix}`,
     p.aliases ? `- tsconfig.paths: ${JSON.stringify(p.aliases)}` : null,
-    p.setupFiles?.length ? `-vitest.setupFiles: ${JSON.stringify(p.setupFiles)}` : null,
+    p.setupFiles?.length
+      ? `-vitest.setupFiles: ${JSON.stringify(p.setupFiles)}`
+      : null,
     p.libs?.length ? `-libs present: ${p.libs.join(', ')}` : null,
     p.styleNotes ? `- preferred style: ${p.styleNotes}` : null,
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 /** light auto-detection for sensible defaults without extra arguments */
 /** helps narrow down persona options */
 function autoDetectPersona(sourceCode: string): Persona {
-  if (/\bfrom\s+['"]react['"]\b|<\w+[\s>]/.test(sourceCode)) return 'react-specialist';
-  if (/\bexpress\b|\bsupertest\b|req\b.*res\b/.test(sourceCode)) return 'express-verifier';
+  if (/\bfrom\s+['"]react['"]\b|<\w+[\s>]/.test(sourceCode))
+    return 'react-specialist';
+  if (/\bexpress\b|\bsupertest\b|req\b.*res\b/.test(sourceCode))
+    return 'express-verifier';
   return 'senior-test-engineer';
 }
 
@@ -142,7 +157,9 @@ function autoDetectRepoProfile(sourceCode: string): RepoProfile {
     testEnv: jsdom ? 'jsdom' : 'node',
     testDir: 'co-located',
     suffix: '.test.ts',
-    libs: jsdom ? ['react', '@testing-library/react', '@testing-library/user-event'] : [],
+    libs: jsdom
+      ? ['react', '@testing-library/react', '@testing-library/user-event']
+      : [],
     styleNotes: 'arrange-act-assert; avoid snapshots unless necessary',
   };
 }
@@ -153,9 +170,12 @@ function stringMarkdownFences(text: string): string {
 }
 
 /** minimal sanity check: something test-like back */
-  /** Makes sure written test contain atleast describe and it/test */
+/** Makes sure written test contain atleast describe and it/test */
 function looksLikeVitest(text: string): boolean {
-  return /\bdescribe\s*\(/.test(text) && (/\bit\s*\(/.test(text) || /\btest\s*\(/.test(text));
+  return (
+    /\bdescribe\s*\(/.test(text) &&
+    (/\bit\s*\(/.test(text) || /\btest\s*\(/.test(text))
+  );
 }
 
 /** stores SDK instances and defaults passed in  */
@@ -182,18 +202,22 @@ export class OpenAIClient implements LlmClient {
     testOutPath?: string;
   }): Promise<string> {
     // guides context for model
-    const persona: Persona = this.defaults.persona ?? autoDetectPersona(sourceCode);
-    const repoProfile: RepoProfile = this.defaults.repoProfile ?? autoDetectRepoProfile(sourceCode);
+    const persona: Persona =
+      this.defaults.persona ?? autoDetectPersona(sourceCode);
+    const repoProfile: RepoProfile =
+      this.defaults.repoProfile ?? autoDetectRepoProfile(sourceCode);
     // guiding where the test goes
-    const resolvedTestOutPath = testOutPath ?? suggestTestOutPath(sutFilePath, repoProfile);
+    const resolvedTestOutPath =
+      testOutPath ?? suggestTestOutPath(sutFilePath, repoProfile);
     // decides what import the test should use to reach the SUT
-    const importPath = this.defaults.importPath ?? calculateImportPath(sutFilePath, resolvedTestOutPath, true);
+    const importPath =
+      this.defaults.importPath ??
+      calculateImportPath(sutFilePath, resolvedTestOutPath, true);
     // builds out the final system prompt
     const personaAddon = PERSONA_ADDONS[persona];
     const repoFactSheet = buildRepoFactSheet(repoProfile);
 
-    const system = BASE_SYSTEM_PROMPT
-      .replace('{{importPath}}', importPath)
+    const system = BASE_SYSTEM_PROMPT.replace('{{importPath}}', importPath)
       .replace('{{repoFactSheet}}', repoFactSheet)
       .replace('{{personaAddOn}}', personaAddon);
 
@@ -212,20 +236,23 @@ export class OpenAIClient implements LlmClient {
 
     // self-heals: this will detect problems and try to auto-fix (output isnt uasable -> trys to auto correct it)
     if (!looksLikeVitest(out)) {
-      // corrective hints to help shape check 
+      // corrective hints to help shape check
       const fixup = await this.client.responses.create({
         model: model || this.defaults.model || 'gpt-4o-mini',
         instructions: system,
         input:
-          user + '\n\nThe previous output was not a Vitest file. Fix by returning ONLY valid Vitest test code that compiles.',
-          temperature: this.defaults.temperature ?? 0.2,
-          max_output_tokens: this.defaults.maxOutputTokens ?? 1500,
+          user +
+          '\n\nThe previous output was not a Vitest file. Fix by returning ONLY valid Vitest test code that compiles.',
+        temperature: this.defaults.temperature ?? 0.2,
+        max_output_tokens: this.defaults.maxOutputTokens ?? 1500,
       });
       out = stringMarkdownFences(fixup.output_text ?? '');
     }
     // if output still fails, this will throw an error
     if (!looksLikeVitest(out)) {
-      throw new Error('❌ Model did not return a runnable file. Check prompts or source.');
+      throw new Error(
+        '❌ Model did not return a runnable file. Check prompts or source.'
+      );
     }
     return out;
   }
