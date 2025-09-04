@@ -11,7 +11,7 @@ const schema = z.object({
     .enum(['openai', 'anthropic', 'vertex', 'azure-openai', 'bedrock'])
     .default('openai'),
   model: z.string().default('gpt-4o-mini'),
-  outFormat: z.enum(['sameLocation', 'testDir']).default('testDir'),
+  outFormat: z.enum(['sameLocation', 'testDir']).default('sameLocation'),
   outBaseSrc: z.string().optional(),
   outBaseTest: z.string().optional(),
   astLibrary: z.enum(['ts-morph', 'babel']).default('ts-morph'),
