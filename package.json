@@ -41,7 +41,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "clean": "rm oclif.manifest.json || rm -Rf dist/",
+    "clean": "rm oclif.manifest.json; rm -Rf dist/",
     "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
