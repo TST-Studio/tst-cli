@@ -115,19 +115,36 @@ You can use this tool in your own repositories.
 ### Installation
 
 ```bash
-$ npm install @tst-studio/tst
+$ npm install -D @tst-studio/tst
 ```
 
 ---
 
 ### Configuration
 
-Automatically add `tst.config.json` configuration file:
+1. Add an entry into `package.json` `scripts` to access the command from the repository
+
+```
+"scripts": {
+  "tst": "tst generate"
+}
+```
+
+2. Add a `tst.config.json` configuration file to configure `tst` command behavior:
 
 ```bash
-$ tst configure --outFormat=sameLocation
+$ tst configure
 Wrote tst.config.json
 ```
+
+3. Create an `.env` file to store the token for accessing the LLM. This example uses OpenAI:
+
+```bash
+$ cat .env
+TST_OPENAI_API_KEY='sk-proj-....'
+```
+
+4. Ensure you do not check this into your repository by including `.env` in your `.gitignore` file
 
 ---
 
@@ -136,10 +153,67 @@ Wrote tst.config.json
 #### Generate tests for a file
 
 ```bash
-tst generate ./src/queue.js
+$ npm run tst ./src/fib.js 
+
+> cli-demo@1.0.0 tst
+> tst generate ./src/fib.js
+
+🚀 Generated test file: src/fib.test.js 🚀
 ```
 
 This will submit the whole file to the LLM and create a test file in the appropriate location.
+
+#### IDE Integration
+
+TST-Studio is passionate about making test creation as seamless as possible in any IDE. The `tst-cli` was created to ensure compatibilty across many IDEs.
+
+For example, here is a fairly simple way to integrate the IDE command into **VSCODE**.
+
+Assuming, the `package.json` commands have the following entry:
+
+```
+"scripts": {
+  "tst": "tst generate"
+}
+```
+
+One can create a `.vscode/tasks.json` configuration:
+
+```
+{ 
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run tst command on current file",
+      "type": "shell",
+      "command": "npm run tst",
+      "args": ["${file}"],          // the file you have open/active
+      "presentation": { "reveal": "always" },
+      "problemMatcher": []
+    }
+  ]
+}
+```
+
+Then, from the Command Pallet, the "Tasks: Run Task" will have a task named "Run tst command on current file".
+
+If one runs tasks often, this will be the top task on the list.
+
+To make this a more streamlined process, one can configure Key Bindings that, when pressed, will run this task. **Ensure the task name matches the task above exactly**: `Run tst command on current file"`
+
+`.vscode/keybindings.json`
+```
+[
+  {
+    "key": "ctrl+alt+r",
+    "mac": "cmd+alt+r",
+    "command": "workbench.action.tasks.runTask",
+    "args": { "task": "Run tst command on current file" }
+  }
+]
+```
+
+
 
 ## How to Contribute
 
