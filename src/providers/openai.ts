@@ -3,35 +3,31 @@ import type { LlmClient } from '../services/llm.js';
 import path from 'node:path';
 import { no } from 'zod/v4/locales';
 
-// makes sure there foward slashes even on windows for import paths
 function toPosix(p: string) {
   return p.split(path.sep).join(path.posix.sep);
 }
 
-// function to use the repo profile to direct where the test file is made
 function suggestTestOutPath(sutFilePath: string, profile: RepoProfile): string {
   const dir = path.dirname(sutFilePath);
-  const base = path.basename(sutFilePath).replace(/\.(tsx?|jsx?|mjs|cjs)$/, ''); // removes the different types of possible files (.ts, .js, tsx,)
+  const base = path.basename(sutFilePath).replace(/\.(tsx?|jsx?|mjs|cjs)$/, '');
   if (profile.testDir === '__tests__') {
-    return path.join(dir, '__tests__', `${base}${profile.suffix}`); // runs it through the test directory
+    return path.join(dir, '__tests__', `${base}${profile.suffix}`);
   }
-  return path.join(dir, `${base}${profile.suffix}`); // creates the path for the import to match the current file
+  return path.join(dir, `${base}${profile.suffix}`);
 }
 
-/** calculate the import path that the test should use to import the current file/ function (SUT: Subject Under Test) */
 function calculateImportPath(
   sutFilePath: string,
   testOutPath: string,
   nodeNext = true
 ): string {
   const from = path.dirname(testOutPath);
-  const rel = toPosix(path.relative(from, sutFilePath)); // connecting the test file and SUT paths
-  const withDot = rel.startsWith('.') ? rel : `./${rel}`; // making sure the relative starts with a period
+  const rel = toPosix(path.relative(from, sutFilePath));
+  const withDot = rel.startsWith('.') ? rel : `./${rel}`;
   const noExt = withDot.replace(/\.(tsx?|jsx?|mjs|cjs)$/, '');
   return nodeNext ? `${noExt}.js` : noExt;
 }
 
-/*  Persona presets: helps guide generation style (express route test vs React test) */
 export type Persona =
   | 'senior-test-engineer'
   | 'react-specialist'
@@ -40,7 +36,6 @@ export type Persona =
   | 'mocking-minimalist'
   | 'coverage-coach';
 
-/* Repo profile for awareness: facts about repo layout to help model write test that run */
 export interface RepoProfile {
   testEnv: 'node' | 'jsdom';
   testDir: 'co-located' | '__tests__';
@@ -51,7 +46,6 @@ export interface RepoProfile {
   styleNotes?: string;
 }
 
-/* Optional: constructor defaults */
 export interface OpenAIClientDefaults {
   importPath?: string;
   persona?: Persona;
@@ -61,7 +55,6 @@ export interface OpenAIClientDefaults {
   model?: string;
 }
 
-/*  Persona add-on rules: for the base prompt, depending on persona  */
 const PERSONA_ADDONS: Record<Persona, string> = {
   'senior-test-engineer':
     'Prefer table-driven tests; avoid snapshots; minimal mocking.',
@@ -77,7 +70,6 @@ const PERSONA_ADDONS: Record<Persona, string> = {
     'Ensure each branch/conditional is touched; keep each test short and focused.',
 };
 
-/** Base test-writer system prompt. Tokens get replaced before send */
 const BASE_SYSTEM_PROMPT = `
 You are a senior TypeScript test writer. Produce a minimal, runnable Vitest test file that exercises key branches and edge cases.
 
@@ -109,7 +101,6 @@ Quality bar:
 - Keep the file self-contained and compilable.
 `.trim();
 
-/** this helps assmble prompts: Build up user message with target modules code */
 function buildUserPrompt(sourceCode: string, importPath: string): string {
   return [
     `Module under test import path: ${importPath}`,
@@ -122,7 +113,6 @@ function buildUserPrompt(sourceCode: string, importPath: string): string {
   ].join('\n');
 }
 
-/** Will turn your repo settings into bullet points for the model to follow */
 function buildRepoFactSheet(p: RepoProfile): string {
   return [
     'REPO FACT SHEET',
@@ -139,8 +129,6 @@ function buildRepoFactSheet(p: RepoProfile): string {
     .join('\n');
 }
 
-/** light auto-detection for sensible defaults without extra arguments */
-/** helps narrow down persona options */
 function autoDetectPersona(sourceCode: string): Persona {
   if (/\bfrom\s+['"]react['"]\b|<\w+[\s>]/.test(sourceCode))
     return 'react-specialist';
@@ -149,7 +137,6 @@ function autoDetectPersona(sourceCode: string): Persona {
   return 'senior-test-engineer';
 }
 
-/** will choose 'jsdom' for react components or 'node' as a default  */
 function autoDetectRepoProfile(sourceCode: string): RepoProfile {
   const persona = autoDetectPersona(sourceCode);
   const jsdom = persona === 'react-specialist';
@@ -164,13 +151,10 @@ function autoDetectRepoProfile(sourceCode: string): RepoProfile {
   };
 }
 
-/** Defensive cleanup for accidental markdown fences (helps remove unecessary ``` fences) */
 function stringMarkdownFences(text: string): string {
   return text.replace(/```[a-z]*\n?([\s\S]*?)```/g, '$1').trim();
 }
 
-/** minimal sanity check: something test-like back */
-/** Makes sure written test contain atleast describe and it/test */
 function looksLikeVitest(text: string): boolean {
   return (
     /\bdescribe\s*\(/.test(text) &&
@@ -178,7 +162,6 @@ function looksLikeVitest(text: string): boolean {
   );
 }
 
-/** stores SDK instances and defaults passed in  */
 export class OpenAIClient implements LlmClient {
   name = 'openai';
   private client: OpenAI;
@@ -193,27 +176,23 @@ export class OpenAIClient implements LlmClient {
   async generateVitest({
     sourceCode,
     model,
-    sutFilePath, // either the absolute path or repo-relative path to the SUT
-    testOutPath, // where the test file is being written
+    sutFilePath,
+    testOutPath,
   }: {
     sourceCode: string;
     model: string;
     sutFilePath: string;
     testOutPath?: string;
   }): Promise<string> {
-    // guides context for model
     const persona: Persona =
       this.defaults.persona ?? autoDetectPersona(sourceCode);
     const repoProfile: RepoProfile =
       this.defaults.repoProfile ?? autoDetectRepoProfile(sourceCode);
-    // guiding where the test goes
     const resolvedTestOutPath =
       testOutPath ?? suggestTestOutPath(sutFilePath, repoProfile);
-    // decides what import the test should use to reach the SUT
     const importPath =
       this.defaults.importPath ??
       calculateImportPath(sutFilePath, resolvedTestOutPath, true);
-    // builds out the final system prompt
     const personaAddon = PERSONA_ADDONS[persona];
     const repoFactSheet = buildRepoFactSheet(repoProfile);
 
@@ -221,9 +200,8 @@ export class OpenAIClient implements LlmClient {
       .replace('{{repoFactSheet}}', repoFactSheet)
       .replace('{{personaAddOn}}', personaAddon);
 
-    // build the user content
     const user = buildUserPrompt(sourceCode, importPath);
-    // API responses
+
     const res = await this.client.responses.create({
       model: model || this.defaults.model || 'gpt-4o-mini',
       instructions: system,
@@ -231,12 +209,10 @@ export class OpenAIClient implements LlmClient {
       temperature: this.defaults.temperature ?? 0.2,
       max_output_tokens: this.defaults.maxOutputTokens ?? 1500,
     });
-    // local clean up after model sends response back
     let out = stringMarkdownFences(res.output_text ?? '');
 
     // self-heals: this will detect problems and try to auto-fix (output isnt uasable -> trys to auto correct it)
     if (!looksLikeVitest(out)) {
-      // corrective hints to help shape check
       const fixup = await this.client.responses.create({
         model: model || this.defaults.model || 'gpt-4o-mini',
         instructions: system,
@@ -248,7 +224,6 @@ export class OpenAIClient implements LlmClient {
       });
       out = stringMarkdownFences(fixup.output_text ?? '');
     }
-    // if output still fails, this will throw an error
     if (!looksLikeVitest(out)) {
       throw new Error(
         '❌ Model did not return a runnable file. Check prompts or source.'
